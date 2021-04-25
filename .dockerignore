@@ -1,0 +1,15 @@
+.gradle
+build
+cypress
+nginx
+node_modules
+templates
+.dockerignore
+.git
+.gitattributes
+.gitignore
+.gitlab-ci.yml
+Dockerfile*
+templates
+!templates/webpack
+!templates/nginx.conf

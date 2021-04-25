@@ -1,0 +1,269 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "intershop-pwa": {
+      "projectType": "application",
+      "cli": {
+        "defaultCollection": "intershop-schematics"
+      },
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "ish",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "customWebpackConfig": {
+              "path": "./templates/webpack/webpack.custom.ts",
+              "replaceDuplicatePlugins": true
+            },
+            "outputPath": "dist/browser",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "aot": true,
+            "assets": ["src/assets"],
+            "styles": [
+              {
+                "inject": false,
+                "input": "src/styles/themes/default/style.scss",
+                "bundleName": "default"
+              },
+              {
+                "inject": false,
+                "input": "src/styles/themes/blue/style.scss",
+                "bundleName": "blue"
+              }
+            ],
+            "scripts": [],
+            "sourceMap": true
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "bundle",
+                  "name": "main",
+                  "baseline": "350kb",
+                  "warning": "100kb",
+                  "error": "200kb"
+                },
+                {
+                  "type": "bundle",
+                  "name": "vendor",
+                  "baseline": "800kb",
+                  "warning": "100kb",
+                  "error": "300kb"
+                },
+                {
+                  "type": "initial",
+                  "maximumWarning": "1500kb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ],
+              "serviceWorker": false,
+              "ngswConfigPath": "ngsw-config.json"
+            },
+            "local": {
+              "tsConfig": "tsconfig.app-no-checks.json",
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "browserTarget": "intershop-pwa:build",
+            "disableHostCheck": true,
+            "host": "0.0.0.0"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "intershop-pwa:build:production"
+            },
+            "local": {
+              "browserTarget": "intershop-pwa:build:local"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "intershop-pwa:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": ["tsconfig.json"],
+            "exclude": ["**/node_modules/**"],
+            "format": "stylish"
+          }
+        },
+        "server": {
+          "builder": "@angular-builders/custom-webpack:server",
+          "options": {
+            "customWebpackConfig": {
+              "path": "./templates/webpack/webpack.custom.ts",
+              "replaceDuplicatePlugins": true
+            },
+            "showCircularDependencies": false,
+            "outputPath": "dist/server",
+            "main": "server.ts",
+            "optimization": true,
+            "tsConfig": "tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "sourceMap": false
+            },
+            "local": {
+              "sourceMap": true
+            }
+          }
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "intershop-pwa:build",
+            "serverTarget": "intershop-pwa:server"
+          },
+          "configurations": {
+            "local": {
+              "browserTarget": "intershop-pwa:build:local",
+              "serverTarget": "intershop-pwa:server:local"
+            }
+          }
+        }
+      }
+    },
+    "organization-management": {
+      "projectType": "application",
+      "cli": {
+        "defaultCollection": "intershop-schematics"
+      },
+      "root": "projects/organization-management",
+      "sourceRoot": "projects/organization-management/src",
+      "prefix": "ish",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "customWebpackConfig": {
+              "path": "./templates/webpack/webpack.custom.ts",
+              "replaceDuplicatePlugins": true
+            },
+            "outputPath": "dist/organization-management",
+            "index": "projects/organization-management/src/index.html",
+            "main": "projects/organization-management/src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "projects/organization-management/tsconfig.app.json",
+            "aot": false,
+            "styles": ["src/styles/themes/default/style.scss"],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/assets/",
+                "output": "/assets/"
+              }
+            ],
+            "scripts": [],
+            "fileReplacements": [
+              {
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.local.ts"
+              }
+            ]
+          }
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "browserTarget": "organization-management:build",
+            "disableHostCheck": true,
+            "host": "0.0.0.0"
+          }
+        }
+      }
+    },
+    "requisition-management": {
+      "projectType": "application",
+      "cli": {
+        "defaultCollection": "intershop-schematics"
+      },
+      "root": "projects/requisition-management",
+      "sourceRoot": "projects/requisition-management/src",
+      "prefix": "ish",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "customWebpackConfig": {
+              "path": "./templates/webpack/webpack.custom.ts",
+              "replaceDuplicatePlugins": true
+            },
+            "outputPath": "dist/requisition-management",
+            "index": "projects/requisition-management/src/index.html",
+            "main": "projects/requisition-management/src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "projects/requisition-management/tsconfig.app.json",
+            "aot": false,
+            "styles": ["src/styles/themes/default/style.scss"],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/assets/",
+                "output": "/assets/"
+              }
+            ],
+            "scripts": [],
+            "fileReplacements": [
+              {
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.local.ts"
+              }
+            ]
+          }
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "browserTarget": "requisition-management:build",
+            "disableHostCheck": true,
+            "host": "0.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "intershop-pwa",
+  "cli": {
+    "analytics": false
+  }
+}
